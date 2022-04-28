@@ -1,0 +1,282 @@
+<krpano spotindex="0" idletime="0.1" polyspot_point_name="">
+
+	<!-- __________________________ 双击插件 __________________________ -->
+	<plugin name="dblclick" 
+	        url="assets/dbc.swf" alturl="assets/dbc.js"
+	        keep="true"
+	        />
+
+	<action name="startup" autorun="onstart">
+		if(startscene === null OR !scene[get(startscene)], copy(startscene,scene[0].name); );
+			loadscene(get(startscene), null, MERGE);
+		if(startactions !== null, startactions() );
+	</action>
+
+	<scene name="scene_1" title="1" onstart="" havevrimage="true" thumburl="panos/wuhan.tiles/thumb.jpg" lat="" lng="" heading="">
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/wuhan.tiles/preview.jpg" />
+
+		<!-- ______________________ mapscale：关键参数 图片比例尺 ______________________ -->
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled" mapscale="90">
+			<level tiledimagewidth="2560" tiledimageheight="2560">
+				<cube url="panos/wuhan.tiles/%s/l3/%v/l3_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1280" tiledimageheight="1280">
+				<cube url="panos/wuhan.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="640" tiledimageheight="640">
+				<cube url="panos/wuhan.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<!-- __________________________ 测量工具按钮 __________________________ -->
+		<layer name="measureBtn_add"
+			   align="righttop"
+			   x="30"
+			   y="30"
+			   url="assets/ruler.png"
+			   crop="0|0|200|200"
+			   width="50"
+			   height="50"
+			   onclick="measure_add();set(url,'assets/ruler_active.png');"
+		/>
+		<!--   onover="set(url,'assets/ruler_active.png');" onout="set(url,'assets/ruler.png');"   -->
+
+		<!-- __________________________ 清空按钮 __________________________ -->
+		<hotspot name="measureBtn_remove"
+				 type="text"
+				 html="清空"
+				 css="font-size:10px; color:white; font-weight:bold;"
+				 visible="false"
+				 wordwrap="true"
+				 bgalpha="0"
+				 bgroundedge="0"
+				 mergedalpha="true"
+				 interactivecontent="false"
+				 inverserotation="false"
+				 onautosized=""
+				 ath="0" atv="0"
+				 ox="-20"
+				 oy="-20"
+				 distorted="true"
+				 renderer="css3d"
+				 onclick="measure_clear"
+				 onover="set(css,'color:red;font-weight:bold;');" onout="set(css,'color:white;font-weight:bold;');"
+		/>
+
+		<!-- __________________________ 总长度 __________________________ -->
+		<hotspot name="length"
+				 type="text"
+				 html=""
+				 css="font-family:Arial; font-size:16px; color:#000000;"
+				 padding="5"
+				 wordwrap="true"
+				 bg="true"
+				 bgcolor="0xFFFFFF"
+				 bgalpha="1.0"
+				 bgborder="1"
+				 bgroundedge="0"
+				 bgshadow=""
+				 txtshadow=""
+				 mergedalpha="true"
+				 interactivecontent="false"
+				 inverserotation="false"
+				 onautosized=""
+				 visible="false"
+				 ox="60"
+				 oy="-10"
+				 ath="0" atv="0"
+				 distorted="true"
+				 renderer="css3d"
+		/>
+
+		<!-- __________________________ 鼠标移动捕捉 __________________________ -->
+		<action name="mouse_move">
+			screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+			updatescreen();
+			delayedcall(calc('crop_anim_' + spotindex),0,mouse_move());
+		</action>
+
+		<!-- __________________________ 开始测量 __________________________ -->
+		<action name="measure_add">
+<!--			error("开始测量：双击屏幕任意位置");-->
+<!--			error("添加节点：单击屏幕任意位置");-->
+<!--			error("结束测量：双击屏幕任意位置");-->
+			measure_clear();
+			set(num,0);
+			def(addpolyspottrue, boolean, true);
+	        set(polyspot_point,0);
+			addhotspot(calc('newspot' + spotindex));
+			set(hotspot[calc('newspot' + spotindex)],
+				polyline="true",
+				fillalpha=0.75,
+				fillcolor=0xEE6A50,
+				borderalpha=0.7,
+				borderwidth=6,
+				bordercolor=0xEE6A50,
+				enabled=false,
+				ispoly=true,
+				zorder="0",
+				zorder2="0.0"
+			);
+
+	        set(plugin[dblclick].ondblclick,
+		        screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[0].ath, hotspot[calc('newspot' + spotindex)].point[0].atv);
+		        addhotspot(polyspot_point_0);
+
+				set(hotspot[polyspot_point_0],
+					polyline="true",
+		        	type=text,
+			        width=18,
+			        height=18,
+			        bg=true,
+			        bgroundedge=9,
+			        bgalpha=1,
+			        bgcolor=0xDC143C,
+			        bgcapture=false,
+					polyline=true,
+					zorder="99",
+			        ath=get(hotspot[calc('newspot' + spotindex)].point[0].ath),
+			        atv=get(hotspot[calc('newspot' + spotindex)].point[0].atv);
+				);
+
+				updatescreen();
+				inc(polyspot_point);
+				mouse_move();
+
+				set(plugin[dblclick].ondblclick,
+					set(hotspot[measureBtn_remove].visible, true );
+					screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+					addhotspot(calc('polyspot_point_' + polyspot_point));
+					set(hotspot[calc('polyspot_point_' + polyspot_point)],
+						polyline="true",
+						type=text,
+						width=18,
+						height=18,
+						bg=true,
+						bgroundedge=9,
+						bgalpha=1,
+						bgcolor=0xDC143C,
+						bgcapture=true,
+						zorder="99",
+						ath=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath),
+						atv=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv)
+					);
+					updatescreen();
+					set(plugin[dblclick].ondblclick,null);
+					stopdelayedcall(s_click);
+					set(events[add_measurespot].onclick,null);
+					delete(addpolyspottrue);
+					stopdelayedcall(calc('crop_anim_' + spotindex));
+					inc(spotindex);
+					set(layer[measureBtn_add].url,'assets/ruler.png');
+			    );
+			);
+
+			set(events[add_measurespot].onclick,
+				if(polyspot_point GT 0,
+					delayedcall(s_click,0,
+						screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+						addhotspot(calc('polyspot_point_' + polyspot_point));
+						set(hotspot[length].visible, true);
+						set(hotspot[calc('polyspot_point_' + polyspot_point)],
+        					polyline="true",
+							type=text,
+					        width=18,
+					        height=18,
+					        bg=true,
+					        bgroundedge=9,
+					        bgalpha=1,
+					        bgcolor=0xDC143C,
+					        bgcapture=true,
+							zorder="99",
+							ath=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath),
+							atv=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv)
+						);
+						set(resultX,get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath));
+						set(resultY,get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv));
+						updatescreen();
+						inc(polyspot_point);
+						measure_calc();
+						set(hotspot[length],
+							ath=get(resultX),
+							atv=get(resultY)
+						);
+						set(hotspot[measureBtn_remove],
+							visible=false,
+							ath=get(resultX),
+							atv=get(resultY)
+						);
+					);
+				);
+	        );
+
+		</action>
+
+		<!-- __________________________ 清除测量 __________________________ -->
+		<action name="measure_clear">
+
+			set(hotspot[measureBtn_remove].visible,
+				false
+			);
+
+			set(hotspot[length],
+				html='',
+				visible=false
+			);
+
+			for(set(i,0),i LT spotindex,inc(i),
+				removehotspot(calc('newspot' + i));
+			);
+
+			for(set(i,0),i LE polyspot_point,inc(i),
+				removehotspot(calc('polyspot_point_' + i));
+			);
+
+		</action>
+
+		<!-- __________________________ 计算逻辑 __________________________ -->
+		<action name="measure_calc">
+			set(tmp,get(polyspot_point));
+			set(start,calc(tmp-2));
+			set(end,calc(tmp-1));
+
+			<!--获取两个坐标之间的球面角度大小-->
+			getlooktodistance(
+				length_angle,
+				hotspot[calc('newspot' + spotindex)].point[get(start)].ath,
+				hotspot[calc('newspot' + spotindex)].point[get(start)].atv,
+				hotspot[calc('newspot' + spotindex)].point[get(end)].ath,
+				hotspot[calc('newspot' + spotindex)].point[get(end)].atv
+			);
+
+			set(tmpx,get(hotspot[calc('newspot' + spotindex)].point[get(end)].ath));
+			set(tmpy,get(hotspot[calc('newspot' + spotindex)].point[get(end)].atv));
+
+			if(tmpy LT 11, set(image.mapscale, 900););
+			if(tmpy LT 10, set(image.mapscale, 910););
+			if(tmpy LT 9, set(image.mapscale, 920););
+			if(tmpy LT 8, set(image.mapscale, 930););
+			if(tmpy LT 7, set(image.mapscale, 940););
+			if(tmpy LT 6, set(image.mapscale, 950););
+			if(tmpy LT 5, set(image.mapscale, 960););
+			if(tmpy LT 4, set(image.mapscale, 970););
+			if(tmpy LT 3, set(image.mapscale, 980););
+			if(tmpy LT 2, set(image.mapscale, 990););
+			if(tmpy LT 1, set(image.mapscale, 1000););
+			if(tmpy GT 10, set(image.mapscale, 90););
+
+			<!--距离计算-->
+			set(length_angle_rad, calc( length_angle / 180 * Math.PI ));
+			Math.tan(length_angle_tan, length_angle_rad);
+			set(measureLen, calc(length_angle_tan * image.mapscale));
+			roundval(measureLen);
+			set(num, calc(num + measureLen));
+			set(length, calc('总长：' + num + 'm'));
+			copy(hotspot[length].html, length);
+		</action>
+
+	</scene>
+
+</krpano>

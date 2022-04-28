@@ -1,0 +1,605 @@
+﻿<krpano spotindex="0" idletime="0.1" polyspot_point_name="">
+
+	<preview type="grid(cube,16,16,512,0xCCCCCC,0xeeeeee,0x999999);"/>
+
+	<plugin name="dblclick" 
+	        url="assets/dbc.swf" alturl="assets/dbc.js"
+	        keep="true"
+	        />
+
+	<action name="startup" autorun="onstart">
+		if(startscene === null OR !scene[get(startscene)], copy(startscene,scene[0].name); );
+			loadscene(get(startscene), null, MERGE);
+		if(startactions !== null, startactions() );
+	</action>
+
+	<events name="add_polyspot" keep="true"/>
+
+	<action name="add_linespot">
+
+			set(layer[button_movehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_removehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_savehotspot],
+				enabled=false,
+				alpha=0.5);
+	    
+	    if(addpolyspottrue === null AND removepolyspottrue === null AND editpolyspottrue === null,
+	    	set(layer[hotspot_pos_info].html,'双击屏幕添加第一个点[br]单击添加更多的点[br]双击闭合[br]点击确定完成添加'); 
+			set(layer[button_addpolyspot_done].visible,true);
+			set(layer[button_addpolyspot_continue].visible,true);
+			def(addpolyspottrue, boolean, true);
+	        set(polyspot_point,0);
+			addhotspot(calc('newspot' + spotindex));
+			set(hotspot[calc('newspot' + spotindex)],
+				polyline="true",
+				fillalpha=0.75,
+				fillcolor=0xFFD700,
+				borderalpha=0.5,
+				bordercolor=0xDAA520,
+				enabled=false,
+				ispoly=true
+				);
+	        set(plugin[dblclick].ondblclick,
+		        screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[0].ath, hotspot[calc('newspot' + spotindex)].point[0].atv);
+		        addhotspot(polyspot_point_0);
+		        set(hotspot[polyspot_point_0],
+					polyline="true",
+		        	type=text,
+			        width=18,
+			        height=18,
+			        bg=true,
+			        bgroundedge=9,
+			        bgalpha=1,
+			        bgcolor=0xFFD700,
+			        bgcapture=false,
+					polyline=true,
+			        ath=get(hotspot[calc('newspot' + spotindex)].point[0].ath),
+			        atv=get(hotspot[calc('newspot' + spotindex)].point[0].atv)
+			        ); 
+		        updatescreen();       
+		        inc(polyspot_point);
+		        mouse_move();
+		        set(plugin[dblclick].ondblclick,
+			        screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+			        addhotspot(calc('polyspot_point_' + polyspot_point));			    
+			        set(hotspot[calc('polyspot_point_' + polyspot_point)],
+						polyline="true",
+			        	type=text,
+				        width=18,
+				        height=18,
+				        bg=true,
+				        bgroundedge=9,
+				        bgalpha=1,
+				        bgcolor=0xFFD700,
+				        bgcapture=true,
+			            ath=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath),
+			            atv=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv)
+				        );
+			        updatescreen();			        
+	                set(plugin[dblclick].ondblclick,null);
+	                stopdelayedcall(s_click);
+			        set(events[add_polyspot].onclick,null);
+			        delete(addpolyspottrue);
+			        stopdelayedcall(calc('crop_anim_' + spotindex)) ;
+			        for(set(i,0),i LE polyspot_point,inc(i),
+				        removehotspot(calc('polyspot_point_' + i));
+			            );			        
+			        inc(spotindex);
+			        add_polyspot();
+			        );
+		        );  
+			set(events[add_polyspot].onclick,
+				if(polyspot_point GT 0,
+					delayedcall(s_click,0,
+						screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+						addhotspot(calc('polyspot_point_' + polyspot_point));
+						set(hotspot[calc('polyspot_point_' + polyspot_point)],
+        					polyline="true",
+							type=text,
+					        width=18,
+					        height=18,
+					        bg=true,
+					        bgroundedge=9,
+					        bgalpha=1,
+					        bgcolor=0xFFD700,
+					        bgcapture=true,
+							ath=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath), 
+							atv=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv)
+							);
+						updatescreen();
+						inc(polyspot_point);
+					);
+				);
+	        );
+	    );
+	</action>
+
+	<action name="add_polyspot">
+
+			set(layer[button_movehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_removehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_savehotspot],
+				enabled=false,
+				alpha=0.5);
+	    
+	    if(addpolyspottrue === null AND removepolyspottrue === null AND editpolyspottrue === null,
+	    	set(layer[hotspot_pos_info].html,'双击屏幕添加第一个点[br]单击添加更多的点[br]双击闭合[br]点击确定完成添加'); 
+			set(layer[button_addpolyspot_done].visible,true);
+			set(layer[button_addpolyspot_continue].visible,true);
+			def(addpolyspottrue, boolean, true);
+	        set(polyspot_point,0);
+			addhotspot(calc('newspot' + spotindex));
+			set(hotspot[calc('newspot' + spotindex)],
+				fillalpha=0.75,
+				fillcolor=0xFFD700,
+				borderalpha=0.5,
+				bordercolor=0xDAA520,
+				enabled=false,
+				ispoly=true
+				);
+	        set(plugin[dblclick].ondblclick,
+		        screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[0].ath, hotspot[calc('newspot' + spotindex)].point[0].atv);
+		        addhotspot(polyspot_point_0);
+		        set(hotspot[polyspot_point_0],
+		        	type=text,
+			        width=18,
+			        height=18,
+			        bg=true,
+			        bgroundedge=9,
+			        bgalpha=1,
+			        bgcolor=0xFFD700,
+			        bgcapture=false,
+					polyline=true,
+			        ath=get(hotspot[calc('newspot' + spotindex)].point[0].ath),
+			        atv=get(hotspot[calc('newspot' + spotindex)].point[0].atv)
+			        ); 
+		        updatescreen();       
+		        inc(polyspot_point);
+		        mouse_move();
+		        set(plugin[dblclick].ondblclick,
+			        screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+			        addhotspot(calc('polyspot_point_' + polyspot_point));			    
+			        set(hotspot[calc('polyspot_point_' + polyspot_point)],
+			        	type=text,
+				        width=18,
+				        height=18,
+				        bg=true,
+				        bgroundedge=9,
+				        bgalpha=1,
+				        bgcolor=0xFFD700,
+				        bgcapture=true,
+			            ath=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath),
+			            atv=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv)
+				        );
+			        updatescreen();			        
+	                set(plugin[dblclick].ondblclick,null);
+	                stopdelayedcall(s_click);
+			        set(events[add_polyspot].onclick,null);
+			        delete(addpolyspottrue);
+			        stopdelayedcall(calc('crop_anim_' + spotindex)) ;
+			        for(set(i,0),i LE polyspot_point,inc(i),
+				        removehotspot(calc('polyspot_point_' + i));
+			            );			        
+			        inc(spotindex);
+			        add_polyspot();
+			        );
+		        );  
+			set(events[add_polyspot].onclick,
+				if(polyspot_point GT 0,
+					delayedcall(s_click,0,
+						screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+						addhotspot(calc('polyspot_point_' + polyspot_point));
+						set(hotspot[calc('polyspot_point_' + polyspot_point)],
+							type=text,
+					        width=18,
+					        height=18,
+					        bg=true,
+					        bgroundedge=9,
+					        bgalpha=1,
+					        bgcolor=0xFFD700,
+					        bgcapture=true,
+							ath=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath), 
+							atv=get(hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv)
+							);
+						updatescreen();
+						inc(polyspot_point);
+					);
+				);
+	        );
+	    );
+
+	</action>
+
+	<action name="add_hotspot_done">
+
+	    set(layer[hotspot_pos_info].html,'点击按钮尝试'); 
+	    set(layer[button_addpolyspot_done].visible,false);
+		set(layer[button_addpolyspot_continue].visible,false);
+		delete(addpolyspottrue);
+		set(layer[button_addpolyspot].onclick,add_polyspot();set(onclick,null));
+		set(plugin[dblclick].ondblclick,null);
+	    stopdelayedcall(s_click);
+		set(events[add_polyspot].onclick,null);
+		removehotspot(calc('newspot' + spotindex));
+
+        set(hsnum,0);
+
+		for(set(i,0),i LT hotspot.count,inc(i),
+
+			if(hotspot[get(i)].ispoly,inc(hsnum))
+			);
+		if(hsnum GT 0,
+			set(layer[button_movehotspot],
+				enabled=true,
+				alpha=1);
+			set(layer[button_removehotspot],
+				enabled=true,
+				alpha=1);
+			set(layer[button_savehotspot],
+				enabled=true,
+				alpha=1);
+			,
+			set(layer[button_movehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_removehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_savehotspot],
+				enabled=false,
+				alpha=0.5);
+			);
+		set(layer[button_addpolyspot],
+				enabled=true,
+				alpha=1);
+
+	</action>	
+
+	<action name="edit_polyspot">
+
+		set(layer[button_addpolyspot],
+			enabled=false,
+			alpha=0.5);
+		set(layer[button_removehotspot],
+			enabled=false,
+			alpha=0.5);
+		set(layer[button_savehotspot],
+			enabled=false,
+			alpha=0.5);
+
+		if(addpolyspottrue === null AND removepolyspottrue === null AND editpolyspottrue === null AND layer[button_addpolyspot_continue].visible == false,
+	        set(layer[hotspot_pos_info].html,'单击锚点[br]松开鼠标然后移动到目标位置后，再次单击锚点确定[br]双击锚点删除该点[br]点击确定完成编辑');  
+			set(layer[button_movehotspot_done].visible,true);
+			def(editpolyspottrue, boolean, true);
+			set(plugin[dblclick].ondblclick,
+                if(polyspot_point_name != null,
+                	stopdelayedcall(s_click2);
+                	stopdelayedcall(s_click3);               	 
+					txtsplit(get(polyspot_point_name), '_', arrpoint);
+					if(hotspot[calc('newspot' + arrpoint[2].value)].point.count	LT 3,   
+						for(set(j,0),j LE hotspot[calc('newspot' + arrpoint[2].value)].point.count,inc(j),
+		                    removehotspot(calc('polyspot_point_' + arrpoint[2].value + '_' + j)); 
+				    	    ); 
+		                removehotspot(calc('newspot' + arrpoint[2].value));
+	              
+	                   ,
+
+		                removehotspot(get(polyspot_point_name)); 
+						hotspot[calc('newspot' + arrpoint[2].value)].point.removearrayitem(get(arrpoint[3].value));					
+				    	for(set(j,0),j LE hotspot[calc('newspot' + arrpoint[2].value)].point.count,inc(j),
+		                    removehotspot(calc('polyspot_point_' + arrpoint[2].value + '_' + j)); 
+		                    updatescreen(); 
+				    	);
+				 	  	
+						for(set(j,0),j LT hotspot[calc('newspot' + arrpoint[2].value)].point.count,inc(j),
+						addhotspot(calc('polyspot_point_' + arrpoint[2].value + '_' + j));					
+						set(hotspot[calc('polyspot_point_' + arrpoint[2].value + '_' + j)],
+							type=text,
+					        width=18,
+					        height=18,
+					        bg=true,
+					        bgroundedge=9,
+					        bgalpha=1,
+					        bgcolor=0xFFD700,
+					        bgcapture=true,
+							ath=get(hotspot[calc('newspot' + arrpoint[2].value)].point[get(j)].ath),
+							atv=get(hotspot[calc('newspot' + arrpoint[2].value)].point[get(j)].atv),
+							onover='set(polyspot_point_name,get(name))',
+							onout='set(polyspot_point_name,null)',
+							state=true,	
+							onclick='if(state == true,set(state,false);onclick1();,set(state,true);onclick2();)'
+							);						
+						);
+					);			
+		        );
+			updatescreen();
+            );
+		
+		    for(set(i,0),i LT spotindex,inc(i),
+				if(hotspot[calc('newspot' + i)] !== null,
+					for(set(j,0),j LT hotspot[calc('newspot' + i)].point.count,inc(j),
+						addhotspot(calc('polyspot_point_' + i + '_' + j));
+						set(hotspot[calc('polyspot_point_' + i + '_' + j)],
+							type=text,
+					        width=18,
+					        height=18,
+					        bg=true,
+					        bgroundedge=9,
+					        bgalpha=1,
+					        bgcolor=0xFFD700,
+					        bgcapture=true,
+							ath=get(hotspot[calc('newspot' + i)].point[get(j)].ath),
+							atv=get(hotspot[calc('newspot' + i)].point[get(j)].atv),
+							onover='set(polyspot_point_name,get(name))',
+							onout='set(polyspot_point_name,null)',
+							state=true,	
+							onclick='if(state == true,set(state,false);onclick1();,set(state,true);onclick2();)'
+							);
+						);
+					updatescreen();
+					);
+				); 
+			);
+		
+
+	</action>
+
+	<action name="edit_polyspot_done">
+
+        set(layer[hotspot_pos_info].html,'点击按钮尝试');  
+		set(visible,false);
+		delete(editpolyspottrue);
+	    for(set(i,0),i LT spotindex,inc(i),
+		    if(hotspot[calc('newspot' + i)] !== null,
+		    	for(set(j,0),j LT hotspot[calc('newspot' + i)].point.count,inc(j),
+                    removehotspot(calc('polyspot_point_' + i + '_' + j));  
+		    	);
+		    ); 		  
+        );
+        set(plugin[dblclick].ondblclick.null);
+
+        set(hsnum,0);
+        
+		for(set(i,0),i LT hotspot.count,inc(i),
+
+			if(hotspot[get(i)].ispoly,inc(hsnum))
+
+			);
+		if(hsnum GT 0,
+			set(layer[button_movehotspot],
+				enabled=true,
+				alpha=1);
+			set(layer[button_removehotspot],
+				enabled=true,
+				alpha=1);
+			set(layer[button_savehotspot],
+				enabled=true,
+				alpha=1);
+			,
+			set(layer[button_movehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_removehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_savehotspot],
+				enabled=false,
+				alpha=0.5);
+
+
+			);
+
+			set(layer[button_addpolyspot],
+				enabled=true,
+				alpha=1);
+		    
+
+	</action>	
+
+	<action name="remove_polyspot">
+
+			set(layer[button_movehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_addpolyspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_savehotspot],
+				enabled=false,
+				alpha=0.5);
+        
+		if(addpolyspottrue === null AND removepolyspottrue === null AND editpolyspottrue === null AND layer[button_addpolyspot_continue].visible == false,
+			set(layer[hotspot_pos_info].html,'单击热区删除[br]点击确定完成删除'); 
+			set(layer[button_removehotspot_done].visible,true);
+			def(removepolyspottrue, boolean, true);
+		    for(set(i,0),i LT spotindex,inc(i),
+		    	  set(hotspot[calc('newspot' + i)],
+		    	  	enabled=true,
+		            onclick='removehotspot(get(name))'
+		            );
+		    	);
+	    );
+
+	</action>
+
+	<action name="remove_polyspot_done">
+
+        set(layer[hotspot_pos_info].html,'点击按钮尝试'); 
+		set(visible,false);
+		delete(removepolyspottrue);
+	    for(set(i,0),i LT spotindex,inc(i),
+	          set(hotspot[calc('newspot' + i)].onclick,null);
+	    	);
+	            set(hsnum,0);
+        
+		for(set(i,0),i LT hotspot.count,inc(i),
+
+			if(hotspot[get(i)].ispoly,inc(hsnum))
+
+			);
+		if(hsnum GT 0,
+			set(layer[button_movehotspot],
+				enabled=true,
+				alpha=1);
+			set(layer[button_removehotspot],
+				enabled=true,
+				alpha=1);
+			set(layer[button_savehotspot],
+				enabled=true,
+				alpha=1);
+			,
+			set(layer[button_movehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_removehotspot],
+				enabled=false,
+				alpha=0.5);
+			set(layer[button_savehotspot],
+				enabled=false,
+				alpha=0.5);
+
+
+			);
+			set(layer[button_addpolyspot],
+				enabled=true,
+				alpha=1);
+
+	</action>
+
+    <action name="onclick1">
+
+	    delayedcall(s_click2,0.2,
+	    set(polyspot_point_name,get(name)); txtsplit(get(polyspot_point_name), '_', arr2point); mouse_move_edit(); );
+
+	</action>
+
+	<action name="mouse_move_edit">
+
+    	screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + arr2point[2].value)].point[get(arr2point[3].value)].ath, hotspot[calc('newspot' + arr2point[2].value)].point[get(arr2point[3].value)].atv);
+        screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('polyspot_point_' + arr2point[2].value + '_' + arr2point[3].value)].ath, hotspot[calc('polyspot_point_' + arr2point[2].value + '_' + arr2point[3].value)].atv);
+    	updatescreen();
+    	delayedcall(mme,0,mouse_move_edit());		        	
+
+	</action>
+
+    <action name="mouse_move">
+	
+    	screentosphere(mouse.stagex, mouse.stagey, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].ath, hotspot[calc('newspot' + spotindex)].point[get(polyspot_point)].atv);
+    	updatescreen();
+    	delayedcall(calc('crop_anim_' + spotindex),0,mouse_move());
+
+	</action>
+
+    <action name="onclick2">
+		delayedcall(s_click3,0.1, stopdelayedcall(mme); set(polyspot_point_name,null););
+    </action>
+
+	<data name="polyspot_content"><![CDATA[
+
+	]]></data>
+
+	<data name="close_sk"><![CDATA[>
+
+	]]></data>
+
+	<data name="open_sk"><![CDATA[ <]]></data>
+
+	<data name="polyspot_content_s"><![CDATA[
+	<!-- 复制以下多边形热区代码 -->
+		]]></data>
+
+	<action name="save_polyspot">
+
+	copy(data[polyspot_content].content,data[polyspot_content_s].content);
+
+	for(set(i,0),i LT hotspot.count,inc(i),
+
+		if(hotspot[get(i)].ispoly,
+             calc(data[polyspot_content].content,data[polyspot_content].content + data[open_sk].content + 'hotspot name="hs_' + hotspot[get(i)].name 
+             	+ '" style="hs"' + data[close_sk].content );
+             for(set(j,0),j LT calc(hotspot[get(i)].point.count - 1),inc(j),
+             	calc(data[polyspot_content].content,data[polyspot_content].content + '    ' + data[open_sk].content + 'point ath="' + hotspot[get(i)].point[get(j)].ath + '" atv="' + hotspot[get(i)].point[get(j)].atv + '"/'  +  data[close_sk].content );
+             );
+             calc(data[polyspot_content].content,data[polyspot_content].content + data[open_sk].content + '/hotspot' +  data[close_sk].content + '
+             	');
+		);
+		);
+
+	showlog(true,top);
+
+	trace(data[polyspot_content].content);
+
+	</action>
+
+	<style name="buttonstyle"  keep="true" url="%SWFPATH%/plugins/textfield.swf" children="true" enabled="true" align="bottom" y="20"  width="150" height="36" vcenter="true"
+		           border="false" background="true"  backgroundcolor="0x000000" backgroundalpha="0.7" roundedge="5"
+			       css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:18px;" zorder="1" 
+			            
+			        />
+
+	<scene name="scene_1" title="1" onstart="" havevrimage="true" thumburl="panos/1.tiles/thumb.jpg" lat="" lng="" heading="">
+		<plugin name="hotspot_pos_info"
+				url="%SWFPATH%/plugins/textfield.swf"
+				html="点击添加多边形热区"
+				css="font-family:Courier;"
+				padding="8"
+				align="lefttop" x="10" y="10"
+				width="200"
+				enabled="false"
+		/>
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/1.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2560" tiledimageheight="2560">
+				<cube url="panos/1.tiles/%s/l3/%v/l3_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1280" tiledimageheight="1280">
+				<cube url="panos/1.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="640" tiledimageheight="640">
+				<cube url="panos/1.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<!-- __________________________ 多边形热点 __________________________ -->
+
+		<layer type="container" width="100%" height="500" align="bottom" >
+			<layer name="button_addlinespot" style="buttonstyle" x="-500" html="添加线" onclick="showlog(false);add_linespot();set(onclick,null)" >
+				<layer name="button_addpolyspot_done" style="buttonstyle" align="top" edge="bottom" css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:14px;" y="-10" html="确定" width="50" visible="false"
+					   onclick="add_hotspot_done();"  />
+			</layer>
+			<layer name="button_addpolyspot" style="buttonstyle" x="-300" html="添加多边形热区" onclick="showlog(false);add_polyspot();set(onclick,null)" >
+				<layer name="button_addpolyspot_done" style="buttonstyle" align="top" edge="bottom" css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:14px;" y="-10" html="确定" width="50" visible="false"
+					   onclick="add_hotspot_done();"  />
+			</layer>
+			<layer name="button_movehotspot" style="buttonstyle" x="-100" html="编辑多边形热区" onclick="showlog(false);edit_polyspot();" enabled=
+					"false" alpha="0.5">
+				<layer name="button_movehotspot_done" style="buttonstyle" align="top" edge="bottom" css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:14px;" y="-10" html="确定" width="50" visible="false" x="0"
+					   onclick="edit_polyspot_done();"  />
+			</layer>
+			<layer name="button_removehotspot" style="buttonstyle" x="100"  html="删除多边形热区" onclick="showlog(false);remove_polyspot();" enabled=
+					"false" alpha="0.5">
+				<layer name="button_removehotspot_done" style="buttonstyle" align="top" edge="bottom" css="text-align:center; color:#FFFFFF; font-family:Arial; font-weight:bold; font-size:14px;" y="-10" html="确定" width="50" visible="false"
+					   onclick="remove_polyspot_done();"  />
+			</layer>
+			<layer name="button_savehotspot" style="buttonstyle" x="300"  html="保存多边形热区" onclick="save_polyspot();" enabled=
+					"false" alpha="0.5"/>
+		</layer>
+
+		<!-- __________________________ 结束 __________________________ -->
+
+	</scene>
+
+
+
+</krpano>
